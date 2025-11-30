@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html class="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peoplédex - Setup</title>
+
+    <link rel="stylesheet" href="franken-ui.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<script src="/core.iife.js" type="module"></script>
+<script src="/icon.iife.js" type="module"></script>
+
+<body>
+    <form id="setup" action="/api/setup" method="post">
+        <fieldset>
+            <h1 class="uk-h4" style="margin-top: 10px">Setup</h1>
+
+            <div class="uk-inline">
+                <span class="uk-form-icon">
+                    <uk-icon icon="user"></uk-icon>
+                </span>
+                <input class="uk-input" id="username" name="username" type="text" required minlength="1" />
+            </div>
+
+            <div class="uk-inline">
+                <span class="uk-form-icon">
+                    <uk-icon icon="key-round"></uk-icon>
+                </span>
+                <input class="uk-input" id="password" name="password" type="password" required minlength="8" />
+            </div>
+
+
+            <a class="uk-form-label" for="characteristics" style="margin-top: 15px">
+                Default Characteristics
+            </a>
+
+            <div class="checkbox">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" checked disabled required id="name"
+                    type="checkbox" name="name" />
+                <label class="uk-form-label" for="name">Name (required)</label>
+            </div>
+            <div class="checkbox">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" checked id="birthday" type="checkbox"
+                    name="birthday" />
+                <label class="uk-form-label" for="birthday">Birthday</label>
+            </div>
+            <div class="checkbox">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" checked id="phone" type="checkbox"
+                    name="phone" />
+                <label class="uk-form-label" for="phone">Phone number</label>
+            </div>
+
+            <div class="checkbox">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" id="email" type="checkbox" name="email" />
+                <label class="uk-form-label" for="email">Email</label>
+            </div>
+
+            <button class="uk-btn" type="submit" style="margin-top: 15px">
+                Complete Setup
+            </button>
+
+        </fieldset>
+    </form>
+</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("#setup>fieldset>div.checkbox>input").forEach(function (el) {
+            el.classList.add("transitions");
+        });
+        document.querySelectorAll("#setup>fieldset>button").forEach(function (el) {
+            el.classList.add("transitions");
+        });
+    });
+</script>
+
+
+</html>

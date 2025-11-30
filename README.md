@@ -4,7 +4,7 @@ Peoplédex is the ideal people indexer, mainly serving the autistic trait to rem
   
 Helps keep track of (i.a.):
 
-- Profile picture
+<!-- - Profile picture -->
 - Name
 - Full name
 - Phone number
@@ -12,11 +12,14 @@ Helps keep track of (i.a.):
 - Birthday
 - Gender
 - Physical characterastics (e.g. height)
-- Characterastics history
-- Languages they can speak
-- (Sub)domains they own
-- School / uni, which study (program, year)
-- Job
-- Arbitrary fields you add yourself: booleans, strings, tables, numbers, locations, images  
+<!-- - Characterastics history -->
+<!-- - Languages they can speak -->
+<!-- - Domains they own -->
+<!-- - School / uni, which study (program, year) -->
+<!-- - Job -->
+- Arbitrary fields you add yourself
+<!-- : booleans, strings, tables, numbers, locations, images   -->
+<!-- generic text field for notes -->
+<!-- generic notes list (just a list, not typed) -->
   
 This tool is strictly meant for personal use! Requiring authentication and not supporting any sharing features.
