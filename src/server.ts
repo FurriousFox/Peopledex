@@ -3,6 +3,29 @@ import path from "node:path";
 import http from "node:http";
 import process from "node:process";
 import mime from "mime-types";
+import { Database } from "@db/sqlite";
+
+const db = new Database(path.join(import.meta.dirname ?? "", "./peopledex.db"), {
+    create: true,
+    readonly: false,
+    memory: false,
+    int64: true,
+    parseJson: true,
+});
+
+declare global {
+    var db: Database;
+}
+globalThis.db = db;
+
+let exit;
+process.on('exit', exit = () => { db.close(); process.exit(0); });
+process.on('SIGINT', exit);
+process.on('SIGTERM', exit);
+process.on('SIGQUIT', exit);
+
+await import("./init.ts");
+
 
 type endpoint = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, params: { [k: string]: string; }) => object | number;
 
@@ -10,9 +33,9 @@ const endpoints: {
     [key: string]: endpoint;
 } = {};
 
-// fs.watchFile(__filename, { interval: 100 }, () => process.exit(0));
-
 process.on('uncaughtException', console.error);
+process.on('unhandledRejection', console.error);
+
 
 const server = http.createServer((req, res) => {
     const url = new URL(req.url ?? "", "http://localhost/");
