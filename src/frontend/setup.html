@@ -15,7 +15,7 @@
 <script src="/icon.iife.js" type="module"></script>
 
 <body>
-    <form id="setup" action="/api/setup" method="post">
+    <form id="form" action="/api/setup" method="post" class="uk-anmt-slide-top-sm">
         <fieldset>
             <h1 class="uk-h4" style="margin-top: 10px">Setup</h1>
 
@@ -59,6 +59,12 @@
                 <label class="uk-form-label" for="email">Email</label>
             </div>
 
+            <div class="checkbox">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" id="address" type="checkbox" name="email" />
+                <label class="uk-form-label" for="email">Address</label>
+            </div>
+
+
             <button class="uk-btn" type="submit" style="margin-top: 15px">
                 Complete Setup
             </button>
@@ -69,10 +75,10 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll("#setup>fieldset>div.checkbox>input").forEach(function (el) {
+        document.querySelectorAll("#form>fieldset>div.checkbox>input").forEach(function (el) {
             el.classList.add("transitions");
         });
-        document.querySelectorAll("#setup>fieldset>button").forEach(function (el) {
+        document.querySelectorAll("#form>fieldset>button").forEach(function (el) {
             el.classList.add("transitions");
         });
     });

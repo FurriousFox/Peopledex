@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html class="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peoplédex - Login</title>
+
+    <link rel="stylesheet" href="franken-ui.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<script src="/core.iife.js" type="module"></script>
+<script src="/icon.iife.js" type="module"></script>
+
+<body>
+    <form id="form" action="/api/login" method="post" class="uk-anmt-slide-top-sm">
+        <fieldset>
+            <h1 class="uk-h4" style="margin-top: 10px">Login</h1>
+
+            <div class="uk-inline">
+                <span class="uk-form-icon">
+                    <uk-icon icon="user"></uk-icon>
+                </span>
+                <input class="uk-input" id="username" name="username" type="text" required minlength="1" />
+            </div>
+
+            <div class="uk-inline">
+                <span class="uk-form-icon">
+                    <uk-icon icon="key-round"></uk-icon>
+                </span>
+                <input class="uk-input" id="password" name="password" type="password" required minlength="8" />
+            </div>
+
+            <div class="uk-anmt-shake uk-form-help text-destructive" style="color: #ff0000; display: none" id="f">
+                Wrong username or password
+            </div>
+
+            <button class="uk-btn" type="submit" style="margin-top: 15px">Login</button>
+
+        </fieldset>
+    </form>
+</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("#form>fieldset>div.checkbox>input").forEach(function (el) {
+            el.classList.add("transitions");
+        });
+        document.querySelectorAll("#form>fieldset>button").forEach(function (el) {
+            el.classList.add("transitions");
+        });
+    });
+
+    document.getElementById('f').style.display =
+        new URLSearchParams(window.location.search).get('r') === '1' ? 'block' : 'none';
+</script>
+
+
+</html>

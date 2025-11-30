@@ -39,9 +39,9 @@ process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
 
-const server = http.createServer(async (req, res) => {
+const server = http.createServer((req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost/");
-    if (await auth(req, res, url)) return;
+    if (auth(req, res, url)) return;
 
     let reqpath = url.pathname;
     const params = Object.fromEntries(url.searchParams.entries());

@@ -1,17 +1,20 @@
 :root {
     color-scheme: dark;
+    background-color: #1c1b22;
 }
 
 html.dark {
     color-scheme: dark;
+    background-color: #1c1b22;
 }
 
 html,
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #1c1b22;
 }
 
-#setup {
+#form {
     display: flex;
     width: 100%;
     min-height: 100vh;
@@ -19,7 +22,7 @@ body {
     align-items: center;
 }
 
-#setup fieldset {
+#form fieldset {
     border: none;
     padding: 0;
     width: 400px;
@@ -29,17 +32,17 @@ body {
     align-items: center;
 }
 
-#setup>fieldset>* {
+#form>fieldset>* {
     width: 100%;
     margin-bottom: 15px;
 }
 
-#setup>fieldset>a {
+#form>fieldset>a {
     width: 100%;
     margin-bottom: 7px;
 }
 
-#setup>fieldset>div.checkbox {
+#form>fieldset>div.checkbox {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -47,27 +50,27 @@ body {
     margin-bottom: 7px;
 }
 
-#setup>fieldset>div.checkbox>input {
+#form>fieldset>div.checkbox>input {
     cursor: pointer;
 }
 
-#setup>fieldset>div.checkbox>input.transitions {
+#form>fieldset>div.checkbox>input.transitions {
     transition: all 0.25s linear;
 }
 
 
-#setup>fieldset>button {
+#form>fieldset>button {
     background-color: transparent;
     border: 1px solid rgb(70, 70, 70);
 
     cursor: pointer;
 }
 
-#setup>fieldset>button:hover {
+#form>fieldset>button:hover {
     background-color: transparent;
     border: 1.5px solid rgb(100, 100, 100);
 }
 
-#setup>fieldset>button.transitions {
+#form>fieldset>button.transitions {
     transition: all 0.05s linear;
 }

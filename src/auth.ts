@@ -13,12 +13,19 @@ const whitelist = [
     "/icon.iife.js",
 ];
 
-export default async function auth(req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, url: URL): Promise<boolean> {
+export default function auth(req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, url: URL): boolean {
     let row: object | undefined | number = -1;
     if (url.pathname === "/login") {
         row = db.prepare("SELECT * FROM auth LIMIT 1;").get();
         if (!row) {
             res.writeHead(302, { "Location": "/setup" });
+            res.end();
+            return true;
+        }
+    } else if (url.pathname === "/setup") {
+        row = db.prepare("SELECT * FROM auth LIMIT 1;").get();
+        if (row) {
+            res.writeHead(302, { "Location": "/login" });
             res.end();
             return true;
         }
@@ -33,7 +40,27 @@ export default async function auth(req: http.IncomingMessage, res: http.ServerRe
         return true;
     }
 
-    res.end("Not implemented");
+    const cookies = req.headers.cookie?.split(";").reduce((acc, cookie) => {
+        const parts = cookie.trim().split("=");
+        const key = parts[0];
+        const value = parts.slice(1).join("=");
+        acc[key] = value;
+        return acc;
+    }, {} as Record<string, string>) || {};
 
-    return true;
+    const token = cookies["token"];
+    if (!token) {
+        res.writeHead(302, { "Location": "/login" });
+        res.end();
+        return true;
+    }
+
+    const session = db.prepare("SELECT * FROM sessions WHERE token = ? AND expires_at > ?;").get(token, Date.now());
+    if (session) {
+        return false;
+    } else {
+        res.writeHead(302, { "Location": "/login" });
+        res.end();
+        return true;
+    }
 }
