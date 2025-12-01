@@ -12,12 +12,20 @@ html,
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: #1c1b22;
+
+    display: flex;
+    min-height: 100svh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 #form {
     display: flex;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100svh;
     justify-content: center;
     align-items: center;
 }
@@ -73,4 +81,60 @@ body {
 
 #form>fieldset>button.transitions {
     transition: all 0.05s linear;
+}
+
+#people {
+    display: flex;
+
+    width: 100%;
+    max-width: 80svw;
+
+    min-height: auto;
+    height: 80svh;
+    border: 1px solid rgb(70, 70, 70);
+    padding: 20px;
+}
+
+#people>hr#h {
+    align-self: stretch;
+    margin-left: 0;
+    margin-right: 10px;
+    overflow-y: auto;
+    height: auto;
+    opacity: 0;
+}
+
+.people-list {
+    min-width: min(200px, 33%);
+    max-width: 25%;
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 10px;
+
+    flex-wrap: nowrap !important;
+    flex-direction: column !important;
+
+    border: none !important;
+
+    scrollbar-width: thin;
+}
+
+.people-list::before {
+    border: none !important;
+}
+
+.people-list>li>a {
+    cursor: pointer;
+    justify-content: left;
+    border-bottom: none;
+    border-right: 2px solid transparent;
+}
+
+.people-list>li>a {
+    transition: background-color 0.1s linear;
+}
+
+.people-list>li>a[aria-selected="true"] {
+    background-color: rgb(40, 40, 40);
+    border-color: white;
 }

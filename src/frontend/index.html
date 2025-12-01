@@ -1,16 +1,73 @@
 <!DOCTYPE html>
 
+<html class="dark">
+
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
     <title>Peoplédex</title>
+
+    <link rel="stylesheet" href="franken-ui.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<html>
-<h1>hello world</h1>
+<script src="/core.iife.js" type="module"></script>
+<script src="/icon.iife.js" type="module"></script>
 
-</html>
+<body>
+    <div id="people" class="uk-card uk-card-body uk-anmt-fade-in-sm">
+        <ul class="uk-tab-left people-list"
+            data-uk-tab="connect: #characteristics-list; animation: uk-anmt-fade; duration: 100">
+            <li><a>Bob</a></li>
+            <li><a>Stefan</a></li>
+            <li><a>Jesse</a></li>
+            <li><a>Job</a></li>
+            <li><a>Jaap</a></li>
+            <li><a>Jan</a></li>
+            <li><a>Alice</a></li>
+            <li><a>Micha</a></li>
+            <li><a>Tristan</a></li>
+            <li><a>Eva</a></li>
+        </ul>
+        <hr id="h" class="uk-divider-vertical" />
+        <div id="characteristics">
+            <ul id="characteristics-list" class="uk-switcher">
+                <li>Bob</li>
+                <li>Stefan</li>
+                <li>Jesse</li>
+                <li>Job</li>
+                <li>Jaap</li>
+                <li>Jan</li>
+                <li>Alice</li>
+                <li>Micha</li>
+                <li>Tristan</li>
+                <li>Eva</li>
+            </ul>
+        </div>
+    </div>
+</body>
 
 <script>
-    // location.reload();
+    const peopleList = document.querySelector('.people-list');
+    const hr = document.getElementById('h');
+
+    function scrollOrDiv() {
+        hr.style.opacity = +(peopleList.scrollHeight <= peopleList.clientHeight);
+        if (navigator.userAgent.includes("Firefox")) hr.style.marginRight = (peopleList.scrollHeight <= peopleList
+            .clientHeight) ? "10px" : "5px";
+    }
+    window.addEventListener('load', scrollOrDiv);
+    window.addEventListener('resize', scrollOrDiv);
+    setTimeout(scrollOrDiv, 100);
+
+    const characteristics = [...document.querySelectorAll('#characteristics-list > *')];
+    characteristics.forEach(c => {
+        c.addEventListener('beforeshow', e => {
+            console.log('shown', c, e);
+            // render characteristics, fetch? maybe just already loaded
+            c.innerHTML += " (render text)"
+        });
+    });
 </script>
+
+</html>
