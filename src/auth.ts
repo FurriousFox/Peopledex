@@ -31,7 +31,7 @@ export default function auth(req: http.IncomingMessage, res: http.ServerResponse
         }
     }
 
-    if (whitelist.includes(url?.pathname)) return false;
+    if (whitelist.includes(url?.pathname) && url.pathname !== "/login") return false;
 
     row = row == -1 ? db.prepare("SELECT * FROM auth LIMIT 1;").get() : row;
     if (!row) {
@@ -48,8 +48,10 @@ export default function auth(req: http.IncomingMessage, res: http.ServerResponse
         return acc;
     }, {} as Record<string, string>) || {};
 
-    const token = cookies["token"];
+    const token: string | undefined = cookies["token"];
     if (!token) {
+        if (url.pathname === "/login") return false;
+
         res.writeHead(302, { "Location": "/login" });
         res.end();
         return true;
@@ -57,8 +59,16 @@ export default function auth(req: http.IncomingMessage, res: http.ServerResponse
 
     const session = db.prepare("SELECT * FROM sessions WHERE token = ? AND expires_at > ?;").get(token, Date.now());
     if (session) {
+        if (url.pathname === "/login") {
+            res.writeHead(302, { "Location": "/" });
+            res.end();
+            return true;
+        }
+
         return false;
     } else {
+        if (url.pathname === "/login") return false;
+
         res.writeHead(302, { "Location": "/login" });
         res.end();
         return true;

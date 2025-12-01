@@ -9,7 +9,7 @@ const db = new Database(path.join(import.meta.dirname ?? "", "./peopledex.db"), 
     create: true,
     readonly: false,
     memory: false,
-    int64: true,
+    // int64: true,
     parseJson: true,
 });
 
@@ -29,7 +29,7 @@ await import("./init.ts");
 import auth from "./auth.ts";
 
 
-type endpoint = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, params: { [k: string]: string; }) => object | number | true;
+type endpoint = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, params: { [k: string]: string; }) => object | number | true | Promise<object | number | true>;
 
 const endpoints: {
     [key: string]: endpoint;
@@ -39,9 +39,9 @@ process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost/");
-    if (auth(req, res, url)) return;
+    if (await auth(req, res, url)) return;
 
     let reqpath = url.pathname;
     const params = Object.fromEntries(url.searchParams.entries());
@@ -82,7 +82,7 @@ const server = http.createServer((req, res) => {
         if (typeof endpoints[reqpath] !== "function") { res.writeHead(404); res.end(); return; }
 
         try {
-            const response = endpoints[reqpath](req, res, params);
+            const response = await endpoints[reqpath](req, res, params);
             if (typeof response === "number") {
                 res.writeHead(response);
                 res.end();

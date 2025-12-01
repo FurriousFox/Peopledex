@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS characteristic_values (
     characteristic_id INTEGER NOT NULL,
     value TEXT NOT NULL,
     FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE CASCADE,
-    FOREIGN KEY (characteristic_id) REFERENCES characteristics(id) ON DELETE CASCADE,
-    UNIQUE (person_id, characteristic_id)
+    FOREIGN KEY (characteristic_id) REFERENCES characteristics(id) ON DELETE CASCADE
 );
 `);
