@@ -26,9 +26,9 @@ This tool is strictly meant for personal use! Requiring authentication and not s
 
 ## Demo
 
-Youtube demo video: <https://youtu.be/>
+Youtube demo video: <https://youtu.be/UpVJc6Amal0>
 
-A demo instance is available at <https://peopledex.argv.nl/>  
+A demo instance is available at <https://peopledex-demo.argv.nl/>  
 Username: `demo`  
 Password: `demopass`
 
