@@ -3,6 +3,7 @@ import http from "node:http";
 export default async function (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage> & { req: http.IncomingMessage; }, params: { [k: string]: string; }) {
     type person = {
         id: number;
+        name: string;
         characteristics: {
             id?: number;
             person_id: number;
@@ -28,7 +29,7 @@ export default async function (req: http.IncomingMessage, res: http.ServerRespon
         req.on('end', () => {
             try {
                 // const body = Object.fromEntries(new URLSearchParams(data).entries());
-                const body = JSON.parse(data);
+                const body = data ? JSON.parse(data) : {};
                 resolve(body);
             } catch (e) {
                 console.error(e);
@@ -57,46 +58,52 @@ export default async function (req: http.IncomingMessage, res: http.ServerRespon
         if (params.id) return people[0] ?? [];
         return people;
     } else if (req.method == "PATCH") {
-        if (!params.id || !((body as person)?.characteristics instanceof Array)) return 400;
+        if (!params.id) return 400;
         const person = body as person;
+        if (!person.characteristics) person.characteristics = [];
+        if (!(person.characteristics instanceof Array)) return 400;
 
         if (person.characteristics.filter(c => typeof c.characteristic_id !== "number" || typeof c.value !== "string").length > 0) return 400;
 
-        for (const char of person.characteristics) {
-            if (char.id) {
-                db.prepare(`
-                    UPDATE characteristic_values
-                    SET value = $value
-                    WHERE id = $id AND person_id = $person_id;
-                `).run({
-                    id: char.id,
-                    person_id: params.id,
-                    value: char.value,
-                });
-            } else {
-                db.prepare(`
-                    INSERT INTO characteristic_values (person_id, characteristic_id, value)
-                    VALUES ($person_id, $characteristic_id, $value);
-                `).run({
-                    person_id: params.id,
-                    characteristic_id: char.characteristic_id,
-                    value: char.value,
-                });
-            }
+        if (person.name !== undefined) {
+            db.prepare(`UPDATE people SET name = :name WHERE id = :id;`).run({
+                name: person.name,
+                id: params.id,
+            });
         }
+
+        // Remove all existing characteristics
+        db.prepare(`DELETE FROM characteristic_values WHERE person_id = ?;`).run(params.id);
+
+        // Add all new characteristics
+        for (const char of person.characteristics) {
+            db.prepare(`
+                INSERT INTO characteristic_values (person_id, characteristic_id, value)
+                VALUES (:person_id, :characteristic_id, :value);
+            `).run({
+                person_id: params.id,
+                characteristic_id: char.characteristic_id,
+                value: char.value,
+            });
+        }
+
+        return 200;
     } else if (req.method == "POST") {
         const person = body as person;
-        if (!person.characteristics || !(person.characteristics instanceof Array)) return 400;
+        if (Object.hasOwn(person, "id")) return 400;
+        if (!person.name || typeof person.name !== "string") return 400;
+        if (!person.characteristics) person.characteristics = [];
+        if (!(person.characteristics instanceof Array)) return 400;
 
         if (person.characteristics.filter(c => typeof c.characteristic_id !== "number" || typeof c.value !== "string").length > 0) return 400;
 
-        db.prepare("INSERT INTO people DEFAULT VALUES;").run();
+        db.prepare("INSERT INTO people (name) VALUES (:name);").run({ name: person.name });
         const person_id = db.lastInsertRowId;
 
         for (const char of person.characteristics) {
             db.prepare(`
                 INSERT INTO characteristic_values (person_id, characteristic_id, value)
-                VALUES ($person_id, $characteristic_id, $value);
+                VALUES (:person_id, :characteristic_id, :value);
             `).run({
                 person_id: person_id,
                 characteristic_id: char.characteristic_id,
@@ -104,7 +111,7 @@ export default async function (req: http.IncomingMessage, res: http.ServerRespon
             });
         }
 
-        return { id: person_id, characteristics: person.characteristics };
+        return { id: person_id, name: person.name, characteristics: person.characteristics };
     } else if (req.method == "DELETE") {
         if (!params.id) return 400;
 

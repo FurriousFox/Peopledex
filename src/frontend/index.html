@@ -9,6 +9,23 @@
 
     <link rel="stylesheet" href="franken-ui.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .person-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .person-item a {
+            flex: 1;
+        }
+
+        .delete-btn {
+            padding: 2px 8px;
+            font-size: 14px;
+            line-height: 1;
+        }
+    </style>
 </head>
 
 <script src="/core.iife.js" type="module"></script>
@@ -16,38 +33,29 @@
 
 <body>
     <div id="people" class="uk-card uk-card-body uk-anmt-fade-in-sm">
-        <ul class="uk-tab-left people-list"
-            data-uk-tab="connect: #characteristics-list; animation: uk-anmt-fade; duration: 100">
-            <li><a>Bob</a></li>
-            <li><a>Stefan</a></li>
-            <li><a>Jesse</a></li>
-            <li><a>Job</a></li>
-            <li><a>Jaap</a></li>
-            <li><a>Jan</a></li>
-            <li><a>Alice</a></li>
-            <li><a>Micha</a></li>
-            <li><a>Tristan</a></li>
-            <li><a>Eva</a></li>
-        </ul>
+        <div id="people-list-d">
+            <ul id="people-list" class="uk-tab-left people-list"
+                data-uk-tab="connect: #characteristics-list; animation: uk-anmt-fade; duration: 100"
+                style="height: auto; padding-right: 0;">
+            </ul>
+            <button id="add_person" class="uk-btn" style="margin-top: auto;">Add person</button>
+        </div>
         <hr id="h" class="uk-divider-vertical" />
         <div id="characteristics">
             <ul id="characteristics-list" class="uk-switcher">
-                <li>Bob</li>
-                <li>Stefan</li>
-                <li>Jesse</li>
-                <li>Job</li>
-                <li>Jaap</li>
-                <li>Jan</li>
-                <li>Alice</li>
-                <li>Micha</li>
-                <li>Tristan</li>
-                <li>Eva</li>
             </ul>
         </div>
     </div>
 </body>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("button.uk-btn").forEach(function (el) {
+            el.classList.add("transitions");
+        });
+    });
+
+
     const peopleList = document.querySelector('.people-list');
     const hr = document.getElementById('h');
 
@@ -59,14 +67,184 @@
     window.addEventListener('load', scrollOrDiv);
     window.addEventListener('resize', scrollOrDiv);
     setTimeout(scrollOrDiv, 100);
+</script>
 
-    const characteristics = [...document.querySelectorAll('#characteristics-list > *')];
-    characteristics.forEach(c => {
-        c.addEventListener('beforeshow', e => {
-            console.log('shown', c, e);
-            // render characteristics, fetch? maybe just already loaded
-            c.innerHTML += " (render text)"
+<script>
+    function getCharacteristicId(type) {
+        const char = globalThis.characteristics.find(c => c.type.toLowerCase() === type.toLowerCase());
+        return char?.id;
+    }
+
+    function getCharacteristicValue(person, type) {
+        const char = globalThis.characteristics.find(c => c.type.toLowerCase() === type.toLowerCase());
+        if (!char) return '';
+        return person.characteristics.find(c => c.characteristic_id === char.id)?.value || '';
+    }
+
+    async function c_show(person, li, e) {
+        // console.log('shown', person, li, e);
+
+        if (li.dataset.rendered) return;
+        li.dataset.rendered = "1";
+
+        li.innerHTML = `
+<fieldset>
+    <!-- name -->
+    <div class="uk-inline">
+        <span class="uk-form-icon">
+            <uk-icon icon="user"></uk-icon>
+        </span>
+        <input class="uk-input" id="name" name="name" type="text" required minlength="1" />
+    </div>
+
+    <!-- birthday -->
+    <div class="uk-inline">
+        <span class="uk-form-icon">
+            <uk-icon icon="cake"></uk-icon>
+        </span>
+        <input class="uk-input" id="birthday" name="birthday" type="date" style="width: 246px;" />
+    </div>
+
+    <!-- phone -->
+    <div class="uk-inline">
+        <span class="uk-form-icon">
+            <uk-icon icon="phone"></uk-icon>
+        </span>
+        <input class="uk-input" id="phone" name="phone" type="tel" />
+    </div>
+
+    <!-- email -->
+    <div class="uk-inline">
+        <span class="uk-form-icon">
+            <uk-icon icon="mail"></uk-icon>
+        </span>
+        <input class="uk-input" id="person-mail" name="person-mail" autocomplete="off" />
+    </div>
+
+    <button class="uk-btn" style="margin-top: 15px">Save</button>
+</fieldset>
+`;
+
+        // set person's name, date, etc
+        li.querySelector('#name').value = person.name || '';
+        li.querySelector('#birthday').value = getCharacteristicValue(person, 'birthday');
+        li.querySelector('#phone').value = getCharacteristicValue(person, 'number');
+        li.querySelector('#person-mail').value = getCharacteristicValue(person, 'email');
+
+        li.querySelector('button.uk-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const name = li.querySelector('#name').value;
+            const birthday = li.querySelector('#birthday').value;
+            const phone = li.querySelector('#phone').value;
+            const email = li.querySelector('#person-mail').value;
+
+            await fetch(`/api/people?id=${person.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    characteristics:
+                        [
+                            { characteristic_id: getCharacteristicId('birthday'), value: birthday },
+                            { characteristic_id: getCharacteristicId('number'), value: phone },
+                            { characteristic_id: getCharacteristicId('email'), value: email }
+                        ].filter(c => c.characteristic_id !== undefined && c.value !== '')
+                })
+            });
+
+            UIkit.notification("Saved changes", {
+                pos: 'bottom-right',
+                status: 'success',
+                timeout: 3000
+            });
+
+            const pl = document.getElementById('people-list');
+            const index = Array.from(li.parentElement.children).indexOf(li);
+            pl.children[index].querySelector('a').firstChild.textContent = name;
         });
+    }
+
+    async function people(id = -1, clear = false) {
+        globalThis.characteristics = await (await fetch("/api/characteristics")).json();
+
+        const people = (id >= 0) ? [await (await fetch(`/api/people?id=${id}`)).json()] :
+            await (await fetch("/api/people")).json();
+
+        const pl = document.getElementById('people-list');
+        const cl = document.getElementById('characteristics-list');
+        if (clear) pl.innerHTML = cl.innerHTML = '';
+
+
+        for (const person of people) {
+            const li = document.createElement('li');
+            li.className = 'person-item';
+            const a = document.createElement('a');
+            a.textContent = person.name;
+            li.appendChild(a);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'person-delete';
+            deleteBtn.innerText = '×';
+            deleteBtn.style =
+                "margin-left: auto; cursor: pointer;";
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (!confirm(`Delete ${person.name}?`)) return;
+
+                await fetch(`/api/people?id=${person.id}`, {
+                    method: 'DELETE'
+                });
+
+                const index = Array.from(pl.children).indexOf(li);
+                li.remove();
+                cl.children[index].remove();
+
+                UIkit.notification(`Deleted ${person.name}`, {
+                    pos: 'bottom-right',
+                    status: 'success',
+                    timeout: 3000
+                });
+            });
+            a.appendChild(deleteBtn);
+
+            pl.appendChild(li);
+
+            const charLi = document.createElement('li');
+            charLi.textContent = JSON.stringify(person.characteristics, null, 2);
+            cl.appendChild(charLi);
+
+            cl.addEventListener('beforeshow', async e => {
+                if (e.target !== charLi) return;
+                return await c_show(person, charLi, e);
+            });
+        }
+    }
+    people();
+
+    document.getElementById('add_person').addEventListener('click', async () => {
+        const name = prompt("Enter the name of the new person:");
+        if (!name) return;
+
+        const response = await (await fetch('/api/people', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name
+            })
+        })).json();
+
+        UIkit.notification("Added new person", {
+            pos: 'bottom-right',
+            status: 'success',
+            timeout: 3000
+        });
+
+        people(response.id, false);
     });
 </script>
 

@@ -95,6 +95,23 @@ body {
     padding: 20px;
 }
 
+#people-list-d {
+    display: flex;
+
+    min-width: min(200px, 33%);
+    max-width: 25%;
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 10px;
+
+    flex-wrap: nowrap !important;
+    flex-direction: column !important;
+
+    border: none !important;
+
+    scrollbar-width: thin;
+}
+
 #people>hr#h {
     align-self: stretch;
     margin-left: 0;
@@ -105,8 +122,7 @@ body {
 }
 
 .people-list {
-    min-width: min(200px, 33%);
-    max-width: 25%;
+    width: 100%;
     overflow-y: auto;
     height: 100%;
     padding-right: 10px;
@@ -137,4 +153,87 @@ body {
 .people-list>li>a[aria-selected="true"] {
     background-color: rgb(40, 40, 40);
     border-color: white;
+}
+
+.people-list>li>a .person-delete {
+    display: none;
+}
+
+.people-list>li>a[aria-selected="true"] .person-delete {
+    display: block;
+}
+
+button.uk-btn {
+    background-color: transparent;
+    border: 1px solid rgb(70, 70, 70);
+
+    cursor: pointer;
+}
+
+button.uk-btn:hover {
+    background-color: transparent;
+    border: 1.5px solid rgb(100, 100, 100);
+}
+
+button.uk-btn.transitions {
+    transition: all 0.05s linear;
+}
+
+#characteristics,
+#characteristics-list>li {
+    overflow-y: auto;
+
+    width: 100%;
+}
+
+#characteristics-list>li>fieldset {
+    border: none;
+    padding: 0;
+    padding-top: 25px;
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#characteristics-list>li>fieldset>* {
+    margin-bottom: 15px;
+}
+
+#characteristics-list>li>fieldset>a {
+    width: 100%;
+    margin-bottom: 7px;
+}
+
+#characteristics-list>li>fieldset>div.checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 7px;
+}
+
+#characteristics-list>li>fieldset>div.checkbox>input {
+    cursor: pointer;
+}
+
+#characteristics-list>li>fieldset>div.checkbox>input.transitions {
+    transition: all 0.25s linear;
+}
+
+
+#characteristics-list>li>fieldset>button {
+    background-color: transparent;
+    border: 1px solid rgb(70, 70, 70);
+
+    cursor: pointer;
+}
+
+#characteristics-list>li>fieldset>button:hover {
+    background-color: transparent;
+    border: 1.5px solid rgb(100, 100, 100);
+}
+
+#characteristics-list>li>fieldset>button.transitions {
+    transition: all 0.05s linear;
 }

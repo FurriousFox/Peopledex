@@ -39,7 +39,7 @@ export default function (req: http.IncomingMessage, res: http.ServerResponse<htt
 
             db.sql`INSERT INTO auth (username, password_hash) VALUES (${body.username}, ${crypto.createHash('sha256').update(body.password).digest().toString('hex')});`;
 
-            db.sql`INSERT INTO characteristics (name, type, exclusive, system, "default") VALUES ('name', 'name', 1, 1, 1);`;
+            // db.sql`INSERT INTO characteristics (name, type, exclusive, system, "default") VALUES ('name', 'name', 1, 1, 1);`;
             if (body.birthday) { db.sql`INSERT INTO characteristics (name, type, exclusive, system, "default") VALUES ('Birthday', 'birthday', 1, 0, 1);`; }
             if (body.phone) { db.sql`INSERT INTO characteristics (name, type, exclusive, system, "default") VALUES ('Phone number', 'number', 0, 0, 1);`; }
             if (body.email) { db.sql`INSERT INTO characteristics (name, type, exclusive, system, "default") VALUES ('Email address', 'email', 0, 0, 1);`; }
