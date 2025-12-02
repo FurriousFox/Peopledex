@@ -17,9 +17,27 @@ Helps keep track of (i.a.):
 <!-- - Domains they own -->
 <!-- - School / uni, which study (program, year) -->
 <!-- - Job -->
-- Arbitrary fields you add yourself
+- **SOON**: Arbitrary fields you add yourself
 <!-- : booleans, strings, tables, numbers, locations, images   -->
 <!-- generic text field for notes -->
 <!-- generic notes list (just a list, not typed) -->
   
 This tool is strictly meant for personal use! Requiring authentication and not supporting any sharing features.
+
+## Demo
+
+Youtube demo video: <https://youtu.be/>
+
+A demo instance is available at <https://peopledex.argv.nl/>  
+Username: `demo`  
+Password: `demopass`
+
+## Installation (requires Deno)
+
+```sh
+git clone https://github.com/FurriousFox/Peopledex.git
+cd Peopledex
+deno run -A src/server.ts
+```
+
+Then open your browser at <http://localhost:5813>
